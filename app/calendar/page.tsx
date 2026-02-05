@@ -34,7 +34,7 @@ export default function CalendarPage() {
         setUser(user)
         await fetchEvents()
       }
-      setLoading(false) 
+      setLoading(false)
     }
     checkAuth()
   }, [router])
@@ -238,7 +238,12 @@ export default function CalendarPage() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events
-                .filter((e) => new Date(e.date) >= new Date())
+                .filter((e) => {
+                  const today = new Date()
+                  today.setHours(0, 0, 0, 0)
+                  const eventDate = new Date(e.date + 'T00:00:00')
+                  return eventDate >= today
+                })
                 .slice(0, 6)
                 .map((event) => (
                   <div
@@ -247,7 +252,7 @@ export default function CalendarPage() {
                   >
                     <p className="text-sm text-purple-600 font-semibold mb-2 flex items-center gap-1">
                       <Calendar size={16} />
-                      {new Date(event.date).toLocaleDateString('es-ES', {
+                      {new Date(event.date + 'T00:00:00').toLocaleDateString('es-ES', {
                         month: 'short',
                         day: 'numeric',
                       })}
