@@ -21,7 +21,9 @@ export default function LoginPage() {
       let result
 
       if (isSignUp) {
-        result = await registerUser(email, password)
+        alert('Ya no te puedes registrar, estamos completos')
+        return
+        //result = await registerUser(email, password)
       } else {
         result = await loginUser(email, password)
       }
