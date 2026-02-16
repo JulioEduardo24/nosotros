@@ -244,7 +244,7 @@ export default function CalendarPage() {
                   const eventDate = new Date(e.date + 'T00:00:00')
                   return eventDate >= today
                 })
-                .slice(0, 6)
+                .slice(0, 9)
                 .map((event) => (
                   <div
                     key={event.id}

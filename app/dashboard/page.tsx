@@ -5,7 +5,8 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { LogOut, Image, Calendar, Plus, Heart, Users } from 'lucide-react'
-
+import ValentineModal from '@/components/ValentineModal'
+import ValentineToggle from '@/components/ValentineToggle'
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -39,7 +40,7 @@ export default function Dashboard() {
       <header className="bg-white shadow-md">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-bold text-purple-700">Nosotros 💜</h1>
+            <h1 className="text-4xl font-bold text-purple-700">Nosotros</h1>
             <p className="text-gray-600">Bienvenido, {user?.email}</p>
           </div>
           <button
@@ -53,6 +54,7 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-12">
+        <ValentineModal />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <Link href="/gallery">
             <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition transform hover:scale-105 cursor-pointer">
