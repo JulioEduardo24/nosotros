@@ -9,7 +9,7 @@ const CONFETTI_COLORS = [
   'bg-blue-400', 'bg-red-400', 'bg-green-400', 'bg-orange-400',
 ]
 
-const EMOJIS = ['🎂', '🎁', '🎈', '✨', '💖', '🌸', '🎉']
+const EMOJIS = ['🎂']
 
 function ConfettiPiece({ index }: { index: number }) {
   const color = CONFETTI_COLORS[index % CONFETTI_COLORS.length]
@@ -133,8 +133,6 @@ export default function BirthdayModal() {
           <h2 className="text-3xl font-extrabold mb-1 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
             {title}
           </h2>
-          <p className="text-lg font-semibold text-pink-400 mb-5">Mi amor 💖</p>
-
           {/* Mensaje */}
           <p className="text-gray-700 text-base leading-relaxed mb-8 px-2">
             {message}
