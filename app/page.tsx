@@ -99,22 +99,7 @@ export default function LoginPage() {
               {loading ? 'Cargando...' : isSignUp ? 'Registrarse' : 'Entrar'}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => {
-                setIsSignUp(!isSignUp)
-                setError('')
-              }}
-              className="text-purple-600 hover:text-purple-700 font-medium transition"
-            >
-              {isSignUp
-                ? '¿Ya tienes cuenta? Inicia sesión'
-                : '¿No tienes cuenta? Registrarse'}
-            </button>
-          </div>
         </div>
-
         <div className="text-center mt-8">
           <p className="text-sm text-purple-400">Hecho con 💜 para nosotros</p>
         </div>

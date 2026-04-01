@@ -54,7 +54,7 @@ export async function loginUser(email: string, password: string) {
       throw new Error('Email o contraseña incorrectos')
     }
 
-    return { success: true, user: { id: user.id, email: user.email } }
+    return { success: true, user: { id: user.id, email: user.nombre_usuario } }
   } catch (err: any) {
     return { success: false, error: err.message }
   }
