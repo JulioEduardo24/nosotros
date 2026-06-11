@@ -2,41 +2,31 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { registerUser, loginUser } from '@/lib/auth'
+import { loginUser } from '@/lib/auth'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [isSignUp, setIsSignUp] = useState(false)
   const router = useRouter()
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-
     try {
-      let result
-
-      if (isSignUp) {
-        alert('Ya no te puedes registrar, estamos completos')
-        return
-        //result = await registerUser(email, password)
-      } else {
-        result = await loginUser(email, password)
-      }
-
+      const result = await loginUser(email, password)
       if (!result.success) {
         setError(result.error)
         return
       }
-
-      // Guardar en localStorage
       localStorage.setItem('user', JSON.stringify(result.user))
-
-      // Ir al dashboard
       router.push('/dashboard')
     } catch (err: any) {
       setError(err.message)
@@ -46,63 +36,65 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[hsl(var(--background))] flex items-center justify-center p-4 relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
+      <div className="w-full max-w-sm animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-purple-700 mb-2">
-            Nosotros
+          <h1 className="text-4xl font-bold tracking-tight text-[hsl(var(--foreground))] mb-1">
+            nosotros
           </h1>
-          <p className="text-gray-600"></p>
+          <p className="text-sm text-[hsl(var(--muted-foreground))]">
+            Solo para los dos
+          </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <form onSubmit={handleAuth} className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border-2 border-purple-200 focus:outline-none focus:border-purple-500 transition"
-                placeholder="tu@email.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Contraseña
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border-2 border-purple-200 focus:outline-none focus:border-purple-500 transition"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-
-            {error && (
-              <div className="p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded">
-                {error}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">Iniciar sesion</CardTitle>
+            <CardDescription>Ingresa tu correo y contrasena</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Correo</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="correo@ejemplo.com"
+                  required
+                  autoComplete="email"
+                />
               </div>
-            )}
+              <div className="space-y-1.5">
+                <Label htmlFor="password">Contrasena</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  autoComplete="current-password"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-purple-600 text-white font-bold py-3 rounded-lg hover:bg-purple-700 transition disabled:opacity-50"
-            >
-              {loading ? 'Cargando...' : isSignUp ? 'Registrarse' : 'Entrar'}
-            </button>
-          </form>
-        </div>
-        <div className="text-center mt-8">
-          <p className="text-sm text-purple-400">Hecho con 💜 para nosotros</p>
-        </div>
+              {error && (
+                <p className="text-sm text-[hsl(var(--destructive))] bg-[hsl(var(--destructive)/0.08)] px-3 py-2 rounded-md">
+                  {error}
+                </p>
+              )}
+
+              <Button type="submit" className="w-full mt-2" disabled={loading}>
+                {loading ? 'Entrando...' : 'Entrar'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

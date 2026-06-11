@@ -1,13 +1,21 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { LogOut, Image, Calendar, Plus, Heart, Users } from 'lucide-react'
+import { LogOut, ImageIcon, CalendarDays, Plus, ArrowRight } from 'lucide-react'
 import ValentineModal from '@/components/ValentineModal'
-import ValentineToggle from '@/components/ValentineToggle'
 import BirthdayModal from '@/components/BirthdayModal'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { ThemeToggle } from '@/components/theme-toggle'
+
+function getNameFromEmail(email: string): string {
+  const local = email.split('@')[0]
+  return local.charAt(0).toUpperCase() + local.slice(1).split(/[._]/)[0]
+}
+
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -30,84 +38,108 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center">
-        <div className="text-3xl animate-bounce">🐱</div>
+      <div className="min-h-screen bg-[hsl(var(--background))] flex items-center justify-center">
+        <div className="w-6 h-6 rounded-full border-2 border-[hsl(var(--primary))] border-t-transparent animate-spin" />
       </div>
     )
   }
 
+  const name = user?.email ? getNameFromEmail(user.email) : 'tu'
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100">
-      <header className="bg-white shadow-md">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold text-purple-700">Nosotros</h1>
-            <p className="text-gray-600">Hola, {user?.email}</p>
+    <div className="min-h-screen bg-[hsl(var(--background))]">
+      <header className="border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+        <div className="max-w-4xl mx-auto px-5 py-3 flex items-center justify-between">
+          <span className="text-xl font-bold tracking-tight text-[hsl(var(--foreground))]">
+            nosotros
+          </span>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="gap-1.5 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+            >
+              <LogOut size={15} />
+              Salir
+            </Button>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
-          >
-            <LogOut size={20} />
-            Salir
-          </button>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
+      <main className="max-w-4xl mx-auto px-5 py-10 space-y-10 animate-fade-in">
         <ValentineModal />
         <BirthdayModal />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <Link href="/gallery">
-            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition transform hover:scale-105 cursor-pointer">
-              <div className="text-6xl mb-4 text-purple-600">
-                <Image size={80} />
-              </div>
-              <h2 className="text-2xl font-bold text-purple-700 mb-2">Galería</h2>
-              <p className="text-gray-600 mb-4">
-                Nuestras fotos más bonitas con historias
-              </p>
-              <div className="flex items-center text-purple-600 font-semibold">
-                Ver galería →
-              </div>
-            </div>
+
+        <div>
+          <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))]">
+            Hola, {name}
+          </h2>
+          <p className="text-[hsl(var(--muted-foreground))] mt-1 text-sm">
+            Aqui estan tus recuerdos y eventos
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Link href="/gallery" className="group block">
+            <Card className="h-full transition-shadow duration-200 group-hover:shadow-md">
+              <CardHeader>
+                <div className="w-10 h-10 rounded-lg bg-[hsl(var(--secondary))] flex items-center justify-center mb-2 transition-colors group-hover:bg-[hsl(var(--primary)/0.12)]">
+                  <ImageIcon size={20} className="text-[hsl(var(--primary))]" />
+                </div>
+                <CardTitle className="text-base">Galeria</CardTitle>
+                <CardDescription className="text-sm">
+                  Fotos y recuerdos compartidos
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <span className="text-xs font-medium text-[hsl(var(--primary))] flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Ver galeria <ArrowRight size={12} />
+                </span>
+              </CardFooter>
+            </Card>
           </Link>
 
-          <Link href="/calendar">
-            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition transform hover:scale-105 cursor-pointer">
-              <div className="text-6xl mb-4 text-purple-600">
-                <Calendar size={80} />
-              </div>
-              <h2 className="text-2xl font-bold text-purple-700 mb-2">Eventos</h2>
-              <p className="text-gray-600 mb-4">
-                Nuestras citas especiales
-              </p>
-              <div className="flex items-center text-purple-600 font-semibold">
-                Ver eventos →
-              </div>
-            </div>
+          <Link href="/calendar" className="group block">
+            <Card className="h-full transition-shadow duration-200 group-hover:shadow-md">
+              <CardHeader>
+                <div className="w-10 h-10 rounded-lg bg-[hsl(var(--secondary))] flex items-center justify-center mb-2 transition-colors group-hover:bg-[hsl(var(--primary)/0.12)]">
+                  <CalendarDays size={20} className="text-[hsl(var(--primary))]" />
+                </div>
+                <CardTitle className="text-base">Eventos</CardTitle>
+                <CardDescription className="text-sm">
+                  Fechas especiales y citas
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <span className="text-xs font-medium text-[hsl(var(--primary))] flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Ver eventos <ArrowRight size={12} />
+                </span>
+              </CardFooter>
+            </Card>
           </Link>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h3 className="text-xl font-bold text-purple-700 mb-6">Agregar Contenido</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Separator />
+
+        <div>
+          <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-3">Agregar</p>
+          <div className="flex flex-col sm:flex-row gap-2">
             <Link href="/gallery/upload">
-              <button className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition flex items-center justify-center gap-2">
-                <Plus size={20} />
-                Subir Foto
-              </button>
+              <Button className="gap-2 w-full sm:w-auto">
+                <Plus size={16} />
+                Nueva foto
+              </Button>
             </Link>
             <Link href="/calendar/add-event">
-              <button className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition flex items-center justify-center gap-2">
-                <Plus size={20} />
-                Agregar Evento
-              </button>
+              <Button variant="outline" className="gap-2 w-full sm:w-auto">
+                <Plus size={16} />
+                Nuevo evento
+              </Button>
             </Link>
           </div>
         </div>
-
-        
       </main>
     </div>
   )

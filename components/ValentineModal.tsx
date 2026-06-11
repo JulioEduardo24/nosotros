@@ -3,83 +3,65 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { X, Heart } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function ValentineModal() {
   const [isOpen, setIsOpen] = useState(false)
-  const [isActive, setIsActive] = useState(false)
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    checkValentineMessage()
+    checkMessage()
   }, [])
 
-  const checkValentineMessage = async () => {
+  const checkMessage = async () => {
     try {
       const { data, error } = await supabase
         .from('valentine_message')
         .select('*')
         .single()
-
       if (error) throw error
-
-      if (data && data.is_active) {
+      if (data?.is_active) {
         setMessage(data.message)
-        setIsActive(true)
         setIsOpen(true)
       }
     } catch (err) {
-      console.error('Error fetching valentine message:', err)
+      console.error(err)
     }
   }
 
-  const handleClose = () => {
-    setIsOpen(false)
-  }
-
-  if (!isOpen || !isActive) return null
+  if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative">
-        {/* Botón cerrar */}
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+      <div className="bg-[hsl(var(--card))] rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center relative animate-pop-in">
         <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
         >
-          <X size={24} />
+          <X size={18} />
         </button>
 
-        {/* Corazones animados */}
-        <div className="flex justify-center gap-4 mb-6">
-          <Heart size={40} className="text-red-500 animate-bounce fill-black-500" />
-          <Heart size={50} className="text-pink-500 animate-bounce fill-black-500" style={{ animationDelay: '0.2s' }} />
-          <Heart size={40} className="text-red-500 animate-bounce fill-black-500" style={{ animationDelay: '0.4s' }} />
+        <div className="flex justify-center gap-3 mb-5">
+          <Heart size={24} className="text-rose-500 fill-rose-500 animate-bounce" style={{ animationDelay: '0s' }} />
+          <Heart size={32} className="text-rose-400 fill-rose-400 animate-bounce" style={{ animationDelay: '0.15s' }} />
+          <Heart size={24} className="text-rose-500 fill-rose-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
         </div>
 
-        {/* Mensaje */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text mb-4">
-            San Valentín
-          </h2>
-          <p className="text-xl text-gray-700 mb-8 leading-relaxed">
-            {message}
-          </p>
+        <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-4">
+          San Valentin
+        </h2>
 
-          {/* Botones */}
-          <div className="flex gap-4">
-            <button
-              onClick={handleClose}
-              className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition"
-            >
-              Cerrar
-            </button>
-            <button
-              onClick={handleClose}
-              className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition"
-            >
-              ¡Sí!
-            </button>
-          </div>
+        <p className="text-[hsl(var(--foreground))] text-sm leading-relaxed mb-6 px-2">
+          {message}
+        </p>
+
+        <div className="flex gap-3">
+          <Button variant="outline" className="flex-1" onClick={() => setIsOpen(false)}>
+            Cerrar
+          </Button>
+          <Button className="flex-1" onClick={() => setIsOpen(false)}>
+            Si
+          </Button>
         </div>
       </div>
     </div>

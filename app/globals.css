@@ -1,1 +1,93 @@
 @import "tailwindcss";
+@custom-variant dark (&:is(.dark, .dark *));
+
+@layer base {
+  :root {
+    --background: 300 20% 98%;
+    --foreground: 270 40% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 270 40% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 40% 12%;
+    --primary: 320 65% 42%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 300 40% 94%;
+    --secondary-foreground: 270 40% 30%;
+    --muted: 300 20% 95%;
+    --muted-foreground: 270 15% 50%;
+    --accent: 290 70% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 300 25% 88%;
+    --input: 300 25% 88%;
+    --ring: 320 65% 42%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 270 30% 8%;
+    --foreground: 300 15% 93%;
+    --card: 270 28% 13%;
+    --card-foreground: 300 15% 93%;
+    --popover: 270 28% 13%;
+    --popover-foreground: 300 15% 93%;
+    --primary: 320 70% 62%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 270 25% 20%;
+    --secondary-foreground: 300 15% 80%;
+    --muted: 270 25% 17%;
+    --muted-foreground: 270 15% 60%;
+    --accent: 290 65% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 270 25% 20%;
+    --input: 270 25% 20%;
+    --ring: 320 70% 62%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    box-sizing: border-box;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0);
+  }
+  .dark input[type="date"]::-webkit-calendar-picker-indicator,
+  .dark input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(520px) rotate(720deg); opacity: 0; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes pop-in {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.animate-fade-in     { animation: fade-in 0.4s ease-out; }
+.animate-float       { animation: float 3s ease-in-out infinite; }
+.animate-pop-in      { animation: pop-in 0.4s ease-out forwards; }
+.animate-confetti    { animation: confetti-fall var(--duration, 3s) var(--delay, 0s) ease-in infinite; }
