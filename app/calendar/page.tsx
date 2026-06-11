@@ -4,13 +4,12 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Clock, ChevronLeft, ChevronRight, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import {
   getPeruToday,
-  toPeruDateString,
   formatDateES,
   formatMonthYear,
   getDaysInMonth,
@@ -29,6 +28,9 @@ interface Event {
 }
 
 const DAY_HEADERS = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do']
+
+// Año de inicio de la relacion
+const START_YEAR = 2024
 
 export default function CalendarPage() {
   const [events, setEvents] = useState<Event[]>([])
@@ -90,8 +92,13 @@ export default function CalendarPage() {
 
   const eventsByDate = new Set(events.map(e => e.date))
   const eventsOnSelected = events.filter(e => e.date === selectedDate)
-
   const upcomingEvents = events.filter(e => e.date >= today).slice(0, 6)
+
+  // Special date checks for the selected day
+  const [selY, selM, selD] = selectedDate.split('-').map(Number)
+  const isAnniversaryDay = selD === 29 && selM === 8
+  const isMonthlyDay = selD === 29 && !isAnniversaryDay
+  const yearsCount = selY - START_YEAR
 
   if (loading) {
     return (
@@ -126,6 +133,7 @@ export default function CalendarPage() {
 
       <main className="max-w-5xl mx-auto px-5 py-8 animate-fade-in">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
           {/* Calendario */}
           <div className="lg:col-span-2">
             <Card>
@@ -159,10 +167,13 @@ export default function CalendarPage() {
                     const isSelected = dateStr === selectedDate
                     const isToday = dateStr === today
                     const hasEvent = eventsByDate.has(dateStr)
+                    const isAnniversary = day === 29 && currentMonth.getMonth() === 7
+                    const isMonthly = day === 29 && !isAnniversary
                     return (
                       <button
                         key={idx}
                         onClick={() => setSelectedDate(dateStr)}
+                        title={isAnniversary ? 'Aniversario' : isMonthly ? 'Mensiversario' : undefined}
                         className={[
                           'relative flex flex-col items-center justify-center rounded-md aspect-square text-xs font-medium transition-colors',
                           isSelected
@@ -173,6 +184,21 @@ export default function CalendarPage() {
                         ].join(' ')}
                       >
                         {day}
+                        {/* Corazon de aniversario / mensiversario */}
+                        {(isAnniversary || isMonthly) && (
+                          <span className="absolute top-0.5 right-0.5">
+                            <Heart
+                              size={isAnniversary ? 7 : 6}
+                              className={isSelected
+                                ? 'fill-white text-white'
+                                : isAnniversary
+                                  ? 'fill-rose-500 text-rose-500'
+                                  : 'fill-rose-400 text-rose-400'}
+                              strokeWidth={0}
+                            />
+                          </span>
+                        )}
+                        {/* Punto de evento */}
                         {hasEvent && (
                           <span className={[
                             'absolute bottom-0.5 w-1 h-1 rounded-full',
@@ -183,11 +209,27 @@ export default function CalendarPage() {
                     )
                   })}
                 </div>
+
+                {/* Leyenda */}
+                <div className="mt-3 pt-3 border-t border-[hsl(var(--border))] flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <Heart size={8} className="fill-rose-500 text-rose-500" strokeWidth={0} />
+                    <span className="text-[10px] text-[hsl(var(--muted-foreground))]">Aniversario (29 ago)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Heart size={7} className="fill-rose-400 text-rose-400" strokeWidth={0} />
+                    <span className="text-[10px] text-[hsl(var(--muted-foreground))]">Mensiversario (cada 29)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--primary))] inline-block" />
+                    <span className="text-[10px] text-[hsl(var(--muted-foreground))]">Evento guardado</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Eventos del dia seleccionado */}
+          {/* Panel derecho */}
           <div className="lg:col-span-3 space-y-4">
             <div>
               <h2 className="text-sm font-semibold text-[hsl(var(--foreground))] capitalize">
@@ -198,6 +240,40 @@ export default function CalendarPage() {
               )}
             </div>
 
+            {/* Banner aniversario / mensiversario */}
+            {(isAnniversaryDay || isMonthlyDay) && (
+              <div className={[
+                'flex items-center gap-3 px-4 py-3 rounded-lg border',
+                isAnniversaryDay
+                  ? 'bg-rose-50 border-rose-200 dark:bg-rose-950/30 dark:border-rose-900'
+                  : 'bg-[hsl(var(--secondary))] border-[hsl(var(--border))]'
+              ].join(' ')}>
+                <div className="flex gap-0.5">
+                  {isAnniversaryDay ? (
+                    [0,1,2].map(i => (
+                      <Heart key={i} size={14} className="fill-rose-500 text-rose-500" />
+                    ))
+                  ) : (
+                    <Heart size={13} className="fill-rose-400 text-rose-400" />
+                  )}
+                </div>
+                <div>
+                  <p className={[
+                    'text-xs font-semibold',
+                    isAnniversaryDay ? 'text-rose-700 dark:text-rose-300' : 'text-[hsl(var(--foreground))]'
+                  ].join(' ')}>
+                    {isAnniversaryDay ? 'Aniversario' : 'Mensiversario'}
+                  </p>
+                  <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
+                    {isAnniversaryDay
+                      ? `${yearsCount} ${yearsCount === 1 ? 'ano' : 'anos'} juntos`
+                      : 'Un mes mas'}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Eventos del dia */}
             {eventsOnSelected.length === 0 ? (
               <Card>
                 <CardContent className="py-10 text-center">
