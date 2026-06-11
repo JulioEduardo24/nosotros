@@ -54,7 +54,6 @@ export default function LoginPage() {
         <Card>
           <CardHeader className="pb-4">
             <CardTitle className="text-lg">Iniciar sesion</CardTitle>
-            <CardDescription>Ingresa tu correo y contrasena</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -71,7 +70,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="password">Contrasena</Label>
+                <Label htmlFor="password">Clave</Label>
                 <Input
                   id="password"
                   type="password"
