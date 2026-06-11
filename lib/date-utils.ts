@@ -44,3 +44,34 @@ export function buildDateStr(current: Date, day: number): string {
   const d = String(day).padStart(2, '0')
   return `${y}-${m}-${d}`
 }
+
+/** Days between two YYYY-MM-DD strings (b - a) */
+function daysBetween(a: string, b: string): number {
+  const msPerDay = 1000 * 60 * 60 * 24
+  return Math.round((new Date(b + 'T12:00:00Z').getTime() - new Date(a + 'T12:00:00Z').getTime()) / msPerDay)
+}
+
+/** Days together since the relationship start date */
+export function getDaysTogether(startDate = '2024-08-29'): number {
+  return daysBetween(startDate, getPeruToday())
+}
+
+/** Days until the next 29th (mensiversario). Returns 0 if today is the 29th. */
+export function getDaysUntilNext29(): number {
+  const today = getPeruToday()
+  const [y, m, d] = today.split('-').map(Number)
+  if (d === 29) return 0
+  if (d < 29) {
+    const thisMonth29 = `${y}-${String(m).padStart(2, '0')}-29`
+    return daysBetween(today, thisMonth29)
+  }
+  const next = new Date(y, m, 29) // month is 0-indexed, so m = next month
+  return daysBetween(today, next.toLocaleDateString('en-CA', { timeZone: 'America/Lima' }))
+}
+
+/** Days until a future YYYY-MM-DD date. Returns null if date is in the past. */
+export function getDaysUntil(dateStr: string): number | null {
+  const today = getPeruToday()
+  if (dateStr <= today) return null
+  return daysBetween(today, dateStr)
+}
